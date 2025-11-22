@@ -19,10 +19,29 @@
 ```
 
 
-Xóa đoạn cuôi: 
+- Xóa đoạn cuôi: 
 
 ```bash
 </div><hr class="chapter-end"\s*\/>[\s\S]*?</body>\s*</html>
 ```
+
+- Role play
+
+
+  + Đoạn đầu
+```bash
+<h2 id="comments">[\s\S]*?</body>\s*</html>
+```
+  + Đoạn cuối 
+```bash
+<body>\s*<div id="top">[\s\S]*?</ul>\s*</div>\s*</div>
+```
+
+
+
+
+
+
+
 
 
