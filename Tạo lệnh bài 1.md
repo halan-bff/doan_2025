@@ -1,17 +1,15 @@
-  
 server: 176.34.0.5
 
 client: 176.34.0.7
 
 attacker:176.34.0.3
 
+```bash 
 Changed password for user kibana_system
-
-PASSWORD kibana_system = LCAo2rmMwfZRFvuTe0tJ
-
+PASSWORD kibana_system = 6nHdjAyw4LBBoFAC78uD
 Changed password for user elastic
-
-PASSWORD elastic = ur36pN06X06KcKwpScnA
+PASSWORD elastic = uTSBsSqsQixedrNh8ru2
+```
 
   
 Thử: 
@@ -83,11 +81,11 @@ sudo /usr/share/elasticsearch/bin/elasticsearch-setup-passwords auto
 
 Changed password for user kibana_system
 
-PASSWORD kibana_system = LCAo2rmMwfZRFvuTe0tJ
+PASSWORD kibana_system = 6nHdjAyw4LBBoFAC78uD
 
 Changed password for user elastic
 
-PASSWORD elastic = ur36pN06X06KcKwpScnA
+PASSWORD elastic = uTSBsSqsQixedrNh8ru2
 
 - Đôi với kibana: 
 ```bash
@@ -126,7 +124,7 @@ sudo nano /etc/logstash/conf.d/lab.conf
 ```
  (pass)  Changed password for user elastic
  
-PASSWORD elastic = ur36pN06X06KcKwpScnA
+PASSWORD elastic = uTSBsSqsQixedrNh8ru2
 
 - Nhớ đoạn output có :
 ``` bash
@@ -190,10 +188,10 @@ curl -u elastic:yourpassword -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v'
 (pass)
 Changed password for user elastic
 
-PASSWORD elastic = ur36pN06X06KcKwpScnA
+PASSWORD elastic = uTSBsSqsQixedrNh8ru2
 
 ``` bash
-curl -u elastic:ur36pN06X06KcKwpScnA -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v' 
+curl -u elastic:uTSBsSqsQixedrNh8ru2 -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v' 
 ```
 
 
@@ -255,11 +253,11 @@ hydra -l ubuntu -P /opt/wordlist.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7
 (pass)
 Changed password for user elastic
 
-PASSWORD elastic = ur36pN06X06KcKwpScnA
+PASSWORD elastic = uTSBsSqsQixedrNh8ru2
 
 Đếm số lần ssh brute force fail: 
 ``` bash
-curl -sS -u elastic:ur36pN06X06KcKwpScnA \
+curl -sS -u elastic:uTSBsSqsQixedrNh8ru2 \
   'http://127.0.0.1:9200/lab-*/_count?filter_path=count' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -444,7 +442,7 @@ sudo tail -n 80 /var/log/syslog | egrep -i 'persistence-once|CRON|persistence'
 (pass)
 Changed password for user elastic
 
-PASSWORD elastic = ur36pN06X06KcKwpScnA
+PASSWORD elastic = uTSBsSqsQixedrNh8ru2
 
 ví dụ :  curl -sS -u elastic:<password_elastic>  
 
@@ -471,7 +469,7 @@ CÓ: xuất hiện dòng kiểu Accepted publickey for ubuntu from <IP> …
 KO: Count = 0
 → curl (đếm chính xác):
 ```bash 
-curl -sS -u elastic:ur36pN06X06KcKwpScnA -H 'Content-Type: application/json' \
+curl -sS -u elastic:uTSBsSqsQixedrNh8ru2 -H 'Content-Type: application/json' \
  'http://127.0.0.1:9200/lab-*/_count' -d '{
   "query": {"bool":{"must":[
     {"match_phrase":{"host.name":"client"}},
@@ -509,7 +507,7 @@ CÓ: Dòng CRON (hoặc log khác) chứa “persistence-once”.
 KO: Count = 0
 curl (tìm đúng chuỗi)
 ```bash 
-curl -sS -u elastic:ur36pN06X06KcKwpScnA -H 'Content-Type: application/json' \
+curl -sS -u elastic:uTSBsSqsQixedrNh8ru2 -H 'Content-Type: application/json' \
  'http://127.0.0.1:9200/lab-*/_count' -d '{
   "query": {"bool":{"must":[
     {"match_phrase":{"host.name":"client"}},
@@ -538,7 +536,7 @@ cp -a ~/.ssh/authorized_keys ~/ir-backup/authorized_keys.bak.$(date +%s)   \
 - Nếu muốn xóa đi làm lại:    rm -rf ir-backup/* 
 - Trên server : Thu thập log
 ```bash 
-curl -sS -u elastic:ur36pN06X06KcKwpScnA \
+curl -sS -u elastic:uTSBsSqsQixedrNh8ru2 \
   "http://127.0.0.1:9200/lab-*/_search?size=10000&pretty" \
   -H "Content-Type: application/json" \
   -d '{
@@ -679,7 +677,7 @@ ir_ssh_alerts
 Lúc này vào alert ở mục Security sẽ có: (làm 3 lần mới ra ạ =)))) ở alert thì chọn signal.rule.risk_score.
 - Sau đó kiểm tra: 
 ```bash 
-curl -sS -u elastic:ur36pN06X06KcKwpScnA \
+curl -sS -u elastic:uTSBsSqsQixedrNh8ru2 \
 'http://127.0.0.1:9200/.siem-signals-*/_search' \
 -H 'Content-Type: application/json' -d '{
   "size": 0,
@@ -698,12 +696,12 @@ curl -sS -u elastic:ur36pN06X06KcKwpScnA \
 
 ### Nếu lỗi:===================================================
 ```bash 
-curl -sS -u elastic:ur36pN06X06KcKwpScnA -X DELETE 'http://127.0.0.1:9200/.siem-signals-*'
+curl -sS -u elastic:uTSBsSqsQixedrNh8ru2 -X DELETE 'http://127.0.0.1:9200/.siem-signals-*'
 ```
 Cái này dùng kiểm tra:
 ```bash 
 curl -sS -H 'Content-Type: application/json' \
-     -u elastic:ur36pN06X06KcKwpScnA\
+     -u elastic:uTSBsSqsQixedrNh8ru2\
 'http://127.0.0.1:9200/lab-*/_search' -d '{
   "size":0,
   "query":{"bool":{"filter":[
@@ -714,6 +712,7 @@ curl -sS -H 'Content-Type: application/json' \
   "aggs":{"by_ip":{"terms":{"field":"source.ip","size":10}}}
 }'
 ```
+
 
 
 
