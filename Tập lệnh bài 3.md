@@ -204,7 +204,9 @@ sudo a2enmod security2
 sudo nano /etc/modsecurity/custom_rules.conf
 ```
 Nội dung thêm:
+``` bash
 SecRule REMOTE_ADDR "@ipMatch 176.40.0.3" "id:1000001,phase:1,deny,log,status:403,msg:'Block 176.40.0.3'"
+```
 
 - b4: Sửa security2.conf → Load file custom_rules.conf vào Apache
 ```bash
