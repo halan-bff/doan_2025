@@ -681,10 +681,11 @@ curl -sS -u elastic:ur36pN06X06KcKwpScnA \
   "aggs": { "ips": { "terms": { "field": "signal.threshold_result.terms.value.keyword", "size": 50 } } }
 }'  | jq --arg time "$(date -Iseconds)" \
   '{rule:"SSH brute-force failed (by IP)",
-    alerts:.hits.total.value,
+    alert:.hits.total.value,
     attackers:(.aggregations.ips.buckets|map(.key)),
     time:$time }' | tee -a /home/ubuntu/evidence.json
 ```
+
 
 
 
