@@ -5,7 +5,9 @@ attacker:176.40.0.3
 =======================================================  
 1. Điều chỉnh .htaccess sao cho cái nào cũng vào được đuôi php 
 2. Thêm checkwork
-
+` bash
+thi
+ `
 =======================================================  
 
 (1.1) Ở server: Triển khai cấu hình trên server
