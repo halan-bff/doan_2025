@@ -1,6 +1,8 @@
   
 server: 176.34.0.5
+
 client: 176.34.0.7
+
 attacker:176.34.0.3
   
 Thử: 
@@ -54,7 +56,10 @@ ssh ubuntu@176.34.0.7
 sudo nano /etc/elasticsearch/elasticsearch.yml
 ```
 + Bật cơ chế auth  → ghi thêm cái câu dưới =)))))
-xpack.security.enabled: true        
+```bash 
+xpack.security.enabled: true
+```
+       
 +  Khởi động lại:
 ```bash
 sudo systemctl restart elasticsearch
@@ -69,11 +74,11 @@ sudo /usr/share/elasticsearch/bin/elasticsearch-setup-passwords auto
 
 Changed password for user kibana_system
 
-PASSWORD kibana_system = 1Owemky0jCXe5FdwB8ay
+PASSWORD kibana_system = LCAo2rmMwfZRFvuTe0tJ
 
 Changed password for user elastic
 
-PASSWORD elastic = eJFGQt1v3k4LkCDjqMhB
+PASSWORD elastic = ur36pN06X06KcKwpScnA
 
 - Đôi với kibana: 
 ```bash
@@ -112,7 +117,7 @@ sudo nano /etc/logstash/conf.d/lab.conf
 ```
  (pass)  Changed password for user elastic
  
-PASSWORD elastic = eJFGQt1v3k4LkCDjqMhB
+PASSWORD elastic = ur36pN06X06KcKwpScnA
 
 - Nhớ đoạn output có :
 ``` bash
@@ -176,10 +181,10 @@ curl -u elastic:yourpassword -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v'
 (pass)
 Changed password for user elastic
 
-PASSWORD elastic = eJFGQt1v3k4LkCDjqMhB
+PASSWORD elastic = ur36pN06X06KcKwpScnA
 
 ``` bash
-curl -u elastic:eJFGQt1v3k4LkCDjqMhB -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v' 
+curl -u elastic:ur36pN06X06KcKwpScnA -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v' 
 ```
 
 
@@ -241,11 +246,11 @@ hydra -l ubuntu -P /opt/wordlist.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7
 (pass)
 Changed password for user elastic
 
-PASSWORD elastic = eJFGQt1v3k4LkCDjqMhB
+PASSWORD elastic = ur36pN06X06KcKwpScnA
 
 Đếm số lần ssh brute force fail: 
 ``` bash
-curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB \
+curl -sS -u elastic:ur36pN06X06KcKwpScnA \
   'http://127.0.0.1:9200/lab-*/_count?filter_path=count' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -430,7 +435,7 @@ sudo tail -n 80 /var/log/syslog | egrep -i 'persistence-once|CRON|persistence'
 (pass)
 Changed password for user elastic
 
-PASSWORD elastic = eJFGQt1v3k4LkCDjqMhB
+PASSWORD elastic = ur36pN06X06KcKwpScnA
 
 ví dụ :  curl -sS -u elastic:<password_elastic>  
 
@@ -457,7 +462,7 @@ CÓ: xuất hiện dòng kiểu Accepted publickey for ubuntu from <IP> …
 KO: Count = 0
 → curl (đếm chính xác):
 ```bash 
-curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB -H 'Content-Type: application/json' \
+curl -sS -u elastic:ur36pN06X06KcKwpScnA -H 'Content-Type: application/json' \
  'http://127.0.0.1:9200/lab-*/_count' -d '{
   "query": {"bool":{"must":[
     {"match_phrase":{"host.name":"client"}},
@@ -495,7 +500,7 @@ CÓ: Dòng CRON (hoặc log khác) chứa “persistence-once”.
 KO: Count = 0
 curl (tìm đúng chuỗi)
 ```bash 
-curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB -H 'Content-Type: application/json' \
+curl -sS -u elastic:ur36pN06X06KcKwpScnA -H 'Content-Type: application/json' \
  'http://127.0.0.1:9200/lab-*/_count' -d '{
   "query": {"bool":{"must":[
     {"match_phrase":{"host.name":"client"}},
@@ -515,14 +520,16 @@ sha256sum ~/ir-backup/*
 ```
 - Mục đích: có bằng chứng/đối chiếu nếu cần.p'
 - Nếu muốn kiểm tra xem nó chạy được hay không thì dùng câu lệnh như dưới: 
+```bash 
 cp -a ~/.ssh/authorized_keys ~/ir-backup/authorized_keys.bak.$(date +%s)   \
   && echo "[OK] Backup done." \
   || echo "[WARN] Not done yet."
 
+```
 - Nếu muốn xóa đi làm lại:    rm -rf ir-backup/* 
 - Trên server : Thu thập log
 ```bash 
-curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB \
+curl -sS -u elastic:ur36pN06X06KcKwpScnA \
   "http://127.0.0.1:9200/lab-*/_search?size=10000&pretty" \
   -H "Content-Type: application/json" \
   -d '{
@@ -536,7 +543,7 @@ curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB \
         },
         "sort": [{"@timestamp": "asc"}]
       }' \
-  | tee /home/ubuntu/evidence1.json
+  | tee -a /home/ubuntu/evidence1.json
 ```
 
 # (1.8) Eradication 1 : Gỡ backdoor key “attacker@lab”
@@ -660,7 +667,7 @@ Document to index:
 Lúc này vào alert ở mục Security sẽ có: (làm 3 lần mới ra ạ =)))) ở alert thì chọn signal.rule.risk_score.
 - Sau đó kiểm tra: 
 ```bash 
-curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB \
+curl -sS -u elastic:ur36pN06X06KcKwpScnA \
 'http://127.0.0.1:9200/.siem-signals-*/_search' \
 -H 'Content-Type: application/json' -d '{
   "size": 0,
@@ -676,6 +683,7 @@ curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB \
     attackers:(.aggregations.ips.buckets|map(.key)),
     time:$time }' | tee -a /home/ubuntu/evidence.json
 ```
+
 
 
 
