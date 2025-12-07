@@ -6,9 +6,11 @@ client: 176.34.0.7
 attacker:176.34.0.3
 
 Changed password for user kibana_system
+
 PASSWORD kibana_system = LCAo2rmMwfZRFvuTe0tJ
 
 Changed password for user elastic
+
 PASSWORD elastic = ur36pN06X06KcKwpScnA
 
   
@@ -712,6 +714,7 @@ curl -sS -H 'Content-Type: application/json' \
   "aggs":{"by_ip":{"terms":{"field":"source.ip","size":10}}}
 }'
 ```
+
 
 
 
