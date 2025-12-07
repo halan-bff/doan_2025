@@ -5,9 +5,6 @@ attacker:176.40.0.3
 =======================================================  
 1. Điều chỉnh .htaccess sao cho cái nào cũng vào được đuôi php 
 2. Thêm checkwork
-``` bash
-thu nog
-```
 =======================================================  
 
 (1.1) Ở server: Triển khai cấu hình trên server
@@ -24,28 +21,43 @@ echo "OPTIMISTIC_ABOUT_FILE_LOCKING = 1" | sudo tee -a /opt/splunk/etc/splunk-la
 - tạo tài khoản
 ```bash
 sudo /opt/splunk/bin/splunk start --accept-license  # đặt mật khẩu
+```
+``` bash
 sudo /opt/splunk/bin/splunk status
 ```
 Mở firefox http://127.0.0.1:8000  &
+``` bash
+firefox http://127.0.0.1:8000  &
+```
 - Rồi login: admin và mật khẩu là  Admin@123
 - Rồi bật cổng 9997
 ```bash
 sudo /opt/splunk/bin/splunk enable listen 9997 -auth admin:Admin@123
-sudo netstat -tulpn | grep 9997
-```
 
+```
+``` bash
+sudo netstat -tulpn | grep 9997
+
+```
 (1.2) Ở client:  Triển khai cấu hình trên client
-Hãy giải nén và start UF rồi:
+- Hãy giải nén và start UF rồi:
 ```bash
 sudo tar -xzf splunkforwarder-8.2.6-a6fe1ee8894b-Linux-x86_64.tgz -C /opt
+```
+- cấp quyền
+``` bash
 sudo chown -R ubuntu:ubuntu /opt/splunkforwarder 
 ```
 Rồi làm tiếp : 
 ```bash
-                sudo /opt/splunkforwarder/bin/splunk start --accept-license 
+sudo /opt/splunkforwarder/bin/splunk start --accept-license 
+
+```
+- kiểm tra
+``` bash
 sudo /opt/splunkforwarder/bin/splunk status
 ```
-# kỳ vọng: splunkd is running.
+kỳ vọng: splunkd is running.
 - Rồi login: client và mật khẩu là  Admin@123
 
 - Khai báo server 176.40.0.5:9997
@@ -81,10 +93,13 @@ Bạn mở file inputs.conf thủ công:
 sudo nano /opt/splunkforwarder/etc/system/local/inputs.conf
 ```
 - Sau đó dán nội dung 1 :
+``` bash
 [monitor:///var/log/apache2/access.log]
 sourcetype = access_combined
 index = web_lab
 disabled = false
+```
+
 
 Bước 3 – Restart Splunk UF để áp dụng cấu hình → bắt buộc làm
 ```bash
@@ -92,17 +107,17 @@ sudo /opt/splunkforwarder/bin/splunk restart
 ```
 
 0.1.3. Ở client : Chạy web =======================================================  
-# Cho root MySQL dễ dùng (tùy nhu cầu, có thể đặt mật khẩu khác)
+Cho root MySQL dễ dùng (tùy nhu cầu, có thể đặt mật khẩu khác)
 ```bash
 sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY ''; FLUSH PRIVILEGES;"
 ```
 
-# Import DB
+Import DB
 ```bash
 sudo mysql -u root < ./src/users_account.sql
 ```
 
-# Copy web vào DocumentRoot
+Copy web vào DocumentRoot
 ```bash
 sudo cp ./src/html/* /var/www/html/
 ```
@@ -112,31 +127,46 @@ http://IP_CLIENT/login.php → chạy login.php
 → ip client:  176.40.0.7
 http://176.40.0.7/ → chạy index.php
 http://176.40.0.7/login.php → chạy login.php
-
+``` bash
+http://176.40.0.7/
+```
 Vì UF đang monitor file này, hệ thống sẽ thực hiện chuỗi:
 Apache → ghi access.log → UF đọc dòng mới → gửi sang Server → Server lưu trong index web_lab.
 
 (0.2) Ở attacker, tấn công spam request 
 Cách chạy
+``` bash
 ./webscan.sh http://176.40.0.7
+```
+
 
 (1.3) Ở server: Phát hiện sự cố	
 1.3.1) Cách nhìn bằng giao diện:	
 Web: mở http://176.40.0.5:8000   → đăng nhập admin / Admin@123
-
+``` bash
+http://176.40.0.5:8000
+```
 Tra bình thường
+``` bash
 index=web_lab sourcetype=access_combined
+```
+
 Giờ thử lại 2 câu query:
 Lọc 404/403:
- index=web_lab sourcetype=access_combined status=404 OR status=403
+``` bash
+index=web_lab sourcetype=access_combined status=404 OR status=403
+```
+
  ➜ Sẽ ra toàn event lỗi 404/403.
 
 Đếm theo IP:
 Câu lệnh tra: 
-
+``` bash
 index=web_lab sourcetype=access_combined
 | stats count by clientip
 | sort - count
+```
+
  
 ➜ Sẽ ra bảng, IP attacker (176.40.0.3) đứng đầu với count rất lớn.
 
@@ -149,10 +179,12 @@ sudo /opt/splunk/bin/splunk search index=web_lab sourcetype=access_combined -aut
 - b1: Tải mod: 
 ```bash
 sudo apt-get update && sudo apt-get install -y libapache2-mod-security2
+```
+  + bật a2emod lên 
+``` bash
 sudo a2enmod security2
 sudo systemctl reload apache2
 ```
-
 - b2: sửa file cấu hình chính  ================================================
 
 ```bash
@@ -180,18 +212,16 @@ sudo cat /etc/apache2/mods-enabled/security2.conf
 sudo nano /etc/apache2/mods-enabled/security2.conf
 ```
 Nội dung sửa: 
-
+``` bash
 <IfModule security2_module>
-	# Default Debian dir for modsecurity's persistent data
+	
 	SecDataDir /var/cache/modsecurity
 
 	IncludeOptional /etc/modsecurity/modsecurity.conf
             IncludeOptional /etc/modsecurity/custom_rules.conf  
-	
 	IncludeOptional /usr/share/modsecurity-crs/*.load
 </IfModule>
-
-
+```
 
 - b5: Test cấu hình Apache
 ```bash
@@ -225,6 +255,8 @@ sudo tail -n 30 /var/log/apache2/error.log
 ```
 Kì vọng như ảnh:
 [Mon Dec 01 12:53:33.446033 2025] [:error] [pid 3070] [client 176.40.0.3:52018] [client 176.40.0.3] ModSecurity: Access denied with code 403 (phase 1). IPmatch: "176.40.0.3" matched at REMOTE_ADDR. [file "/etc/modsecurity/custom_rules.conf"] [line "1"] [id "1000001"] [msg "Block 176.40.0.3"] [hostname "176.40.0.7"] [uri "/"] [unique_id "aS2PzVSGTiU3@@xAm3WcCgAAAAA"]
+
+- kiểm tra: 
 ```bash
 sudo tail -n 2 /var/log/apache2/error.log
 ```
@@ -248,14 +280,14 @@ sudo a2enmod security2
 (1.5) Ở client: Diệt bỏ nguyên nhân	
 Ở trên client:
 - Sửa file:
-```bash
-sudo cat /etc/apache2/sites-available/000-default.conf
+``` bash
 sudo nano /etc/apache2/sites-available/000-default.conf
 ```
 
 
-Nội dung thêm vào/chỉnh sửa:
 
+Nội dung thêm vào/chỉnh sửa:
+``` bash
 <VirtualHost *:80>
     ServerName client-web
     DocumentRoot /var/www/html
@@ -276,8 +308,12 @@ Nội dung thêm vào/chỉnh sửa:
 ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog /var/log/apache2/access.log combined
 </VirtualHost>
+```
 
 
+```bash
+sudo cat /etc/apache2/sites-available/000-default.conf
+```
 
  Ở đây:
 127.0.0.1 là loopback (curl http://127.0.0.1/backup).
@@ -285,47 +321,48 @@ ErrorLog ${APACHE_LOG_DIR}/error.log
 ✔ Mọi IP khác (ví dụ attacker 176.40.0.3) đều bị 403.
 - Reload Apache
 ```bash
-sudo apache2ctl configtest      # phải: Syntax OK
-                                sudo service apache2 reload     # hoặc: sudo service apache2 restart
+sudo apache2ctl configtest     
+sudo service apache2 reload     
 ```
 - Test : ===================================
 Trên client:
 # Dùng localhost
+``` bash
 curl -I http://127.0.0.1/backup
+```
+
 # Hoặc dùng IP của client
+``` bash
 curl -I http://176.40.0.7/backup
+```
 → Kỳ vọng: 200 OK (admin nội bộ vẫn xem được).
 Trên attacker (176.40.0.3):
+``` bash
 curl -I http://176.40.0.7/backup
+```
 → Kỳ vọng: 403 Forbidden.
 Như vậy: Không cần “chỉ đích danh 1 attacker”,
 Mà là chỉ cho phép IP nội bộ → mọi attacker (IP khác) đều bị chặn, còn client thì vẫn truy cập bình thường.
 
 (1.6) Ở client: Theo dõi hậu sự cố (1)
 	
-mkdir -p ~/ir-backup
+
 ```bash
+mkdir -p ~/ir-backup
 sudo tar czf ~/ir-backup/webscan_logs.tar.gz /var/log/apache2/access.log /var/log/apache2/error.log
-```
-sha256sum ~/ir-backup/webscan_logs.tar.gz > ~/ir-backup/webscan_logs.sha256
-
-hoặc
-mkdir -p ~/ir-backup
-
-```bash
-sudo tar czf ~/ir-backup/webscan_logs.tar.gz \
-```
-    /var/log/apache2/access.log /var/log/apache2/error.log
-
 sha256sum ~/ir-backup/webscan_logs.tar.gz | tee ~/ir-backup/webscan_logs.sha256
+```
 
 
 (1.7) Ở server: Theo dõi hậu sự cố (2)	
 1.7.1. Bước 1 : Vào trang  Search & Reporting để search dữ liệu	
+
+``` bash
 index=web_lab sourcetype=access_combined (status=404 OR status=403)
 | stats count AS err_count by clientip
 | where err_count >= 200
 | sort - err_count
+```
 
 → Time range: Last 5 minutes.
 Bấm Save As → Alert…
@@ -364,6 +401,9 @@ WEB_SCAN detected: ip=176.40.0.3 err_count=395
 → Lúc đó có thể dùng chuỗi WEB_SCAN detected hoặc sourcetype=web_scan_alert cho checkwork.
 
 Trên giao diện Splunk cũng search:
+``` bash
 index=web_lab sourcetype=web_scan_alert
+```
+
 → Thấy event kiểu WEB_SCAN detected: ip=176.40.0.3 ... là OK, dùng luôn cho checkwork.
 
