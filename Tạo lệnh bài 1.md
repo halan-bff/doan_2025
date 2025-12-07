@@ -9,7 +9,7 @@ Thử:
 ```
 
 
-(0.1) bật ssh     
+# (0.1) bật ssh     
 Làm ở 2 terminal attacker và client : 
 ```bash
 sudo systemctl status ssh
@@ -29,22 +29,30 @@ sudo systemctl stop xinetd
 sudo systemctl disable xinetd
 sudo systemctl restart ssh
 ```
+- Có thể thử chạy:
+``` bash
 hydra -l ubuntu -P /opt/wordlist.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7 
 ls -l /opt/wordlist.txt
 hydra -l ubuntu -P /opt/wordlist.txt -I -t 4 -f ssh://176.34.0.7  → có thể bị lỗi nếu trước đó cài sẵn tường lửa trong dockerfile
+```
+- check log:
 ```bash
 sudo tail -n 200 /var/log/fail2ban.log
 sudo tail -n 200 /var/log/auth.log
 ```
+- chạy ssh :
+``` bash
 ssh ubuntu@176.34.0.7
+```
 
-(1.1) Triển khai trên server +  Cài đặt mật khẩu ============================
+
+# (1.1) Triển khai trên server +  Cài đặt mật khẩu 
  - Đối với elasticsearch
 ```bash
 sudo nano /etc/elasticsearch/elasticsearch.yml
 ```
 + Bật cơ chế auth  → ghi thêm cái câu dưới =)))))
-xpack.security.enabled: true        # lab 1-node tự thêm khi cài trong dockerfiles
+xpack.security.enabled: true        
 +  Khởi động lại:
 ```bash
 sudo systemctl restart elasticsearch
@@ -64,15 +72,20 @@ PASSWORD elastic = eJFGQt1v3k4LkCDjqMhB
 - Đôi với kibana: 
 ```bash
 sudo nano /etc/kibana/kibana.yml
+
+```
+hoặc
+``` bash
 sudo cat /etc/kibana/kibana.yml
 ```
 +  QUAN TRỌNG: Kibana PHẢI dùng user kibana_system (không dùng elastic ở đây)
+``` bash
 elasticsearch.username: "kibana_system"
-elasticsearch.password: " "
-→ elasticsearch.password: "<PASS_KIBANA_SYSTEM>"  → ghi ở trên đấy
-+ Bật security phía Kibana
+elasticsearch.password: ""
 xpack.security.enabled: true
 xpack.encryptedSavedObjects.encryptionKey: "12345678901234567890123456789012"
+```
+
 - Rồi restart lại kibana:
 ```bash
 sudo systemctl restart kibana
@@ -82,14 +95,21 @@ sudo systemctl status kibana
 Trên server, do Filebeat từ client → Logstash của server→ Elasticsearch 
 Filebeat gửi Beats tới Logstash 5044 (không cần user/pass).
 Logstash phải có user/pass khi ghi vào ES. 
+``` bash
 ls -l /etc/logstash/conf.d/lab.conf 
+```
 Mở /etc/logstash/conf.d/lab.conf và đảm bảo đoạn output có:
 ```bash
 sudo nano /etc/logstash/conf.d/lab.conf 
 ```
  (pass)  Changed password for user elastic
 PASSWORD elastic = eJFGQt1v3k4LkCDjqMhB
-- Nhớ đoạn output có : 
+- Nhớ đoạn output có :
+``` bash
+    user  => "elastic"
+    password => ""
+```
+=======================================================  
 output {
   elasticsearch {
     hosts => ["http://127.0.0.1:9200"]
@@ -100,7 +120,7 @@ output {
   }
   stdout { codec => rubydebug }
 }
-
+=======================================================  
 - Rồi khởi động :
 ```bash
 sudo systemctl restart logstash
@@ -108,21 +128,14 @@ sudo systemctl status logstash --no-pager
 sudo cat /etc/logstash/conf.d/lab.conf
 ```
 - Kiểm tra các cổng hết 5044, 9200, 5601 :
-```bash
-sudo ss -lntp | grep :5044 hoặc sudo netstat -lntp | grep 5044   # đợi 2-3 phút sau restart
-sudo ss -lntp | grep ':9200' 
-sudo ss -lntp | grep ':5601'
+``` bash
 sudo ss -lnt 'sport = :9200 or sport = :5601 or sport = :5044'  
-sudo ss -lntp | egrep ':5044\b|:9200\b|:5601\b'
 ```
 
 
-(1.2) Triển khai trên client    =========================================
+# (1.2) Triển khai trên client   
 - Đã cài sẵn công cụ filebeat trong client , bây giờ chỉ làm các lệnh dưới : 
 ```bash
-sudo nano /etc/filebeat/filebeat.yml     #chỉ chỉnh lại output và cổng, bỏ http
-sudo systemctl enable filebeat
-sudo systemctl status filebeat
 sudo systemctl restart filebeat
 ```
 - Kiểm tra chạy chưa : 
@@ -490,3 +503,4 @@ curl -sS -u elastic:eJFGQt1v3k4LkCDjqMhB \
     alerts:.hits.total.value,
     attackers:(.aggregations.ips.buckets|map(.key)),
     time:$time }' | tee -a /home/ubuntu/evidence.json
+
