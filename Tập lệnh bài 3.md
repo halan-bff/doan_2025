@@ -7,7 +7,7 @@ attacker:176.40.0.3
 2. Thêm checkwork
 =======================================================  
 
-(1.1) Ở server: Triển khai cấu hình trên server
+# (1.1) Ở server: Triển khai cấu hình trên server
 Giải nén và cài đặt: 
 - đợi giải nén 3-4p
 ```bash
@@ -20,7 +20,7 @@ echo "OPTIMISTIC_ABOUT_FILE_LOCKING = 1" | sudo tee -a /opt/splunk/etc/splunk-la
 ```
 - tạo tài khoản
 ```bash
-sudo /opt/splunk/bin/splunk start --accept-license  # đặt mật khẩu
+sudo /opt/splunk/bin/splunk start --accept-license  
 ```
 ``` bash
 sudo /opt/splunk/bin/splunk status
@@ -39,7 +39,7 @@ sudo /opt/splunk/bin/splunk enable listen 9997 -auth admin:Admin@123
 sudo netstat -tulpn | grep 9997
 
 ```
-(1.2) Ở client:  Triển khai cấu hình trên client
+# (1.2) Ở client:  Triển khai cấu hình trên client
 - Hãy giải nén và start UF rồi:
 ```bash
 sudo tar -xzf splunkforwarder-8.2.6-a6fe1ee8894b-Linux-x86_64.tgz -C /opt
@@ -76,7 +76,7 @@ Active forwards:
 Configured but inactive forwards:
 	None
 
-(0.1) Ở server & client: Thiết lập log + index Splunk từ access.log
+# (0.1) Ở server & client: Thiết lập log + index Splunk từ access.log
 0.1.1. Trên Splunk Server (Splunk Enterprise)
 Bước 1 – Kiểm tra Splunk đang chạy → status í → auto chạy mà ;v
 Bước 2 – Tạo index riêng cho web, ví dụ: web_lab
@@ -133,14 +133,14 @@ http://176.40.0.7/
 Vì UF đang monitor file này, hệ thống sẽ thực hiện chuỗi:
 Apache → ghi access.log → UF đọc dòng mới → gửi sang Server → Server lưu trong index web_lab.
 
-(0.2) Ở attacker, tấn công spam request 
+# (0.2) Ở attacker, tấn công spam request 
 Cách chạy
 ``` bash
 ./webscan.sh http://176.40.0.7
 ```
 
 
-(1.3) Ở server: Phát hiện sự cố	
+# (1.3) Ở server: Phát hiện sự cố	
 1.3.1) Cách nhìn bằng giao diện:	
 Web: mở http://176.40.0.5:8000   → đăng nhập admin / Admin@123
 ``` bash
@@ -175,7 +175,7 @@ index=web_lab sourcetype=access_combined
 sudo /opt/splunk/bin/splunk search index=web_lab sourcetype=access_combined -auth admin:Admin@123 -maxout 20 | tee -a evidence.txt
 ```
 
-(1.4) Ở client : Kiểm soát sự cố    ===============================================	 
+# (1.4) Ở client : Kiểm soát sự cố    ===============================================	 
 - b1: Tải mod: 
 ```bash
 sudo apt-get update && sudo apt-get install -y libapache2-mod-security2
@@ -277,7 +277,7 @@ Nếu muốn bật lại →  Apache đã load ModSecurity module → Chạy:
 sudo a2enmod security2
 ```
 
-(1.5) Ở client: Diệt bỏ nguyên nhân	
+#(1.5) Ở client: Diệt bỏ nguyên nhân	
 Ở trên client:
 - Sửa file:
 ``` bash
@@ -324,14 +324,14 @@ sudo cat /etc/apache2/sites-available/000-default.conf
 sudo apache2ctl configtest     
 sudo service apache2 reload     
 ```
-- Test : ===================================
+- Test : 
 Trên client:
-# Dùng localhost
+Dùng localhost
 ``` bash
 curl -I http://127.0.0.1/backup
 ```
 
-# Hoặc dùng IP của client
+Hoặc dùng IP của client
 ``` bash
 curl -I http://176.40.0.7/backup
 ```
@@ -354,7 +354,7 @@ sha256sum ~/ir-backup/webscan_logs.tar.gz | tee ~/ir-backup/webscan_logs.sha256
 ```
 
 
-(1.7) Ở server: Theo dõi hậu sự cố (2)	
+#(1.7) Ở server: Theo dõi hậu sự cố (2)	
 1.7.1. Bước 1 : Vào trang  Search & Reporting để search dữ liệu	
 
 ``` bash
