@@ -175,7 +175,7 @@ index=web_lab sourcetype=access_combined
 sudo /opt/splunk/bin/splunk search index=web_lab sourcetype=access_combined -auth admin:Admin@123 -maxout 20 | tee -a evidence.txt
 ```
 
-# (1.4) Ở client : Kiểm soát sự cố    ===============================================	 
+# (1.4) Ở client : Kiểm soát sự cố  
 - b1: Tải mod: 
 ```bash
 sudo apt-get update && sudo apt-get install -y libapache2-mod-security2
@@ -185,7 +185,7 @@ sudo apt-get update && sudo apt-get install -y libapache2-mod-security2
 sudo a2enmod security2
 sudo systemctl reload apache2
 ```
-- b2: sửa file cấu hình chính  ================================================
+- b2: sửa file cấu hình chính  
 
 ```bash
 sudo cp /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf
@@ -277,7 +277,7 @@ Nếu muốn bật lại →  Apache đã load ModSecurity module → Chạy:
 sudo a2enmod security2
 ```
 
-#(1.5) Ở client: Diệt bỏ nguyên nhân	
+# (1.5) Ở client: Diệt bỏ nguyên nhân	
 Ở trên client:
 - Sửa file:
 ``` bash
@@ -344,7 +344,7 @@ curl -I http://176.40.0.7/backup
 Như vậy: Không cần “chỉ đích danh 1 attacker”,
 Mà là chỉ cho phép IP nội bộ → mọi attacker (IP khác) đều bị chặn, còn client thì vẫn truy cập bình thường.
 
-(1.6) Ở client: Theo dõi hậu sự cố (1)
+# (1.6) Ở client: Theo dõi hậu sự cố (1)
 	
 
 ```bash
@@ -354,8 +354,8 @@ sha256sum ~/ir-backup/webscan_logs.tar.gz | tee ~/ir-backup/webscan_logs.sha256
 ```
 
 
-#(1.7) Ở server: Theo dõi hậu sự cố (2)	
-1.7.1. Bước 1 : Vào trang  Search & Reporting để search dữ liệu	
+# (1.7) Ở server: Theo dõi hậu sự cố (2)	
+## 1.7.1. Bước 1 : Vào trang  Search & Reporting để search dữ liệu	
 
 ``` bash
 index=web_lab sourcetype=access_combined (status=404 OR status=403)
