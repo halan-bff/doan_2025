@@ -647,18 +647,20 @@ SSH brute-force failed (by IP)
 ```
 + Schedule: Run every 1 minute, Look back 5 minutes.
 + Actions: trong môi trường của bạn chỉ có “Index” → dùng luôn:
-Chọn Index → tạo connector mới:
-Connector name:
++ Chọn Index → tạo connector mới:
++ Connector name:
 ```bash 
 SSH brute-force alerts
 ```
-Index:
++ Index:
 ```bash 
 ir_ssh_alerts
 ```
-Index: lab-* (Kibana sẽ tự tạo).
-
-Document to index:
++ Index:  (Kibana sẽ tự tạo).
+```bash 
+lab-*
+```
++ Document to index:
 ```bash 
 {"@timestamp":"{{date}}","rule":"{{rule.name}}","results":"{{context.results}}"}
 ```
@@ -683,6 +685,7 @@ curl -sS -u elastic:ur36pN06X06KcKwpScnA \
     attackers:(.aggregations.ips.buckets|map(.key)),
     time:$time }' | tee -a /home/ubuntu/evidence.json
 ```
+
 
 
 
