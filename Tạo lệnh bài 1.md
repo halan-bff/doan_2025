@@ -679,12 +679,13 @@ ir_ssh_alerts
 Lúc này vào alert ở mục Security sẽ có alert hiện ra.
 
 - Nếu không hiện ra và last response ở tab Rule báo là "failed" thì có 3 trường hợp:
-+ Do trước đó chạy ở lab.conf mk đã theo đúng chuẩn (không có filter nên nó tự cho chuẩn)
-+ Nhưng khi mk tự thêm filter do chính mk làm (source.ip.source) , nó dẫn đến mapping lỗi
-
-    + Trường nào đó trong signal.threshold_result.* hay signal.* được ghi với một kiểu dữ liệu A (vd: string)
   
-+  sửa rule quá nhiều lần, đổi field / đổi kiểu (vd từ IP sang số, hay đổi field aggregation)
+  + Do trước đó chạy ở lab.conf mk đã theo đúng chuẩn (không có filter nên nó tự cho chuẩn)
+  + Nhưng khi mk tự thêm filter do chính mk làm (source.ip.source) , nó dẫn đến mapping lỗi
+
+     + Trường nào đó trong signal.threshold_result.* hay signal.* được ghi với một kiểu dữ liệu A (vd: string)
+  
+  +  sửa rule quá nhiều lần, đổi field / đổi kiểu (vd từ IP sang số, hay đổi field aggregation)
 
 →  Ở đây thì do trường hợp thứ 2, vì vậy ta xoá luôn toàn bộ index signal cũ (cùng mapping cũ, data cũ).
 ```bash 
@@ -746,6 +747,7 @@ curl -sS -H 'Content-Type: application/json' \
   "aggs":{"by_ip":{"terms":{"field":"source.ip.keyword","size":10}}}
 }'
 ```
+
 
 
 
