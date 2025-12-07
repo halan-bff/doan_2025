@@ -10,11 +10,16 @@ attacker:176.40.0.3
 
 (1.1) Ở server: Triển khai cấu hình trên server
 Giải nén và cài đặt: 
+- đợi giải nén 3-4p
 ```bash
-    sudo tar -xzf splunk-8.2.6-a6fe1ee8894b-Linux-x86_64.tgz -C /opt  #đợi giải nén 3-4p
-sudo chown -R ubuntu:ubuntu /opt/splunk
+sudo tar -xzf splunk-8.2.6-a6fe1ee8894b-Linux-x86_64.tgz -C /opt  
 ```
+- cấp quyền 
+```bash
+sudo chown -R ubuntu:ubuntu /opt/splunk
 echo "OPTIMISTIC_ABOUT_FILE_LOCKING = 1" | sudo tee -a /opt/splunk/etc/splunk-launch.conf
+```
+- tạo tài khoản
 ```bash
 sudo /opt/splunk/bin/splunk start --accept-license  # đặt mật khẩu
 sudo /opt/splunk/bin/splunk status
