@@ -628,39 +628,37 @@ http://176.34.0.5:5601
 ```
 
 ## B) Trong giao diện UI, tạo alert
-Vào tab Security → Rules → Create new rule → chọn Threshold (đừng chọn Query).
-+ mục Defination : 
-Index patterns: lab-*   (đã có trước đó và bắt dùng)
+Vào tab Security → Rules → Create new rule → chọn Threshold (đừng chọn Query).##
+### mục Defination :
+  + Index patterns: lab-*   (đã có trước đó và bắt dùng)
+  + Custom query:
 KQL:
 ```bash 
 host.name:"client" and message:(sshd and ("Failed password" or "Invalid user" or "authentication failure"))
 ```
-Group by:
+  + Group by:
 ```bash 
 source.ip.keyword
 ```
 Threshold: is ≥ 1 within 1 minute (tùy đổi ngưỡng).
 
-+ About: Name:
+### About: 
+  + Name:
 ```bash 
 SSH brute-force failed (by IP)
 ```
-+ Schedule: Run every 1 minute, Look back 5 minutes.
-+ Actions: trong môi trường của bạn chỉ có “Index” → dùng luôn:
-+ Chọn Index → tạo connector mới:
-+ Connector name:
+  + Schedule: Run every 1 minute, Look back 5 minutes.
+  + Actions: trong môi trường của bạn chỉ có “Index” → dùng luôn:
+  + Chọn Index → tạo connector mới:
+  + Connector name:
 ```bash 
 SSH brute-force alerts
 ```
-+ Index:
+  + Index:
 ```bash 
 ir_ssh_alerts
 ```
-+ Index:  (Kibana sẽ tự tạo).
-```bash 
-lab-*
-```
-+ Document to index:
+  + Document to index:
 ```bash 
 {"@timestamp":"{{date}}","rule":"{{rule.name}}","results":"{{context.results}}"}
 ```
@@ -686,6 +684,24 @@ curl -sS -u elastic:ur36pN06X06KcKwpScnA \
     time:$time }' | tee -a /home/ubuntu/evidence.json
 ```
 
+### Nếu lỗi:
+```bash 
+curl -sS -u elastic:ur36pN06X06KcKwpScnA -X DELETE 'http://127.0.0.1:9200/.siem-signals-*'
+```
+Cái này dùng kiểm tra:
+```bash 
+curl -sS -H 'Content-Type: application/json' \
+     -u elastic:ur36pN06X06KcKwpScnA\
+'http://127.0.0.1:9200/lab-*/_search' -d '{
+  "size":0,
+  "query":{"bool":{"filter":[
+    {"match_phrase":{"host.name":"client"}},
+    {"query_string":{"default_field":"message","query":"sshd AND (Failed OR Invalid OR \"authentication failure\")"}},
+    {"range":{"@timestamp":{"gte":"now-5m","lte":"now"}}}
+  ]}},
+  "aggs":{"by_ip":{"terms":{"field":"source.ip","size":10}}}
+}'
+```
 
 
 
