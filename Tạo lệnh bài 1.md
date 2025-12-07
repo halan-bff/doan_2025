@@ -647,9 +647,12 @@ Threshold: is ≥ 1 within 1 minute (tùy đổi ngưỡng).
 ```bash 
 SSH brute-force failed (by IP)
 ```
-  + Schedule: Run every 1 minute, Look back 5 minutes.
-  + Actions: trong môi trường của bạn chỉ có “Index” → dùng luôn:
-  + Chọn Index → tạo connector mới:
+### Schedule: 
+  + Schedule: Run every 2 minute, Look back 1 minutes.
+
+### Actions: trong môi trường của bạn chỉ có “Index” → dùng luôn: Log
+  + Action Frequency: On each rule execution
+Chọn Index → tạo connector mới:
   + Connector name:
 ```bash 
 SSH brute-force alerts
@@ -684,7 +687,7 @@ curl -sS -u elastic:ur36pN06X06KcKwpScnA \
     time:$time }' | tee -a /home/ubuntu/evidence.json
 ```
 
-### Nếu lỗi:
+### Nếu lỗi:===================================================
 ```bash 
 curl -sS -u elastic:ur36pN06X06KcKwpScnA -X DELETE 'http://127.0.0.1:9200/.siem-signals-*'
 ```
@@ -702,6 +705,7 @@ curl -sS -H 'Content-Type: application/json' \
   "aggs":{"by_ip":{"terms":{"field":"source.ip","size":10}}}
 }'
 ```
+
 
 
 
