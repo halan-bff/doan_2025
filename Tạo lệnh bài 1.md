@@ -659,7 +659,9 @@ SSH brute-force failed (by IP)
 
 ### Actions: trong môi trường của bạn chỉ có “Index” → dùng luôn: Log
   + Action Frequency: On each rule execution
+
 Chọn Index → tạo connector mới:
+
   + Connector name:
 ```bash 
 SSH brute-force alerts
@@ -674,7 +676,24 @@ ir_ssh_alerts
 ```
 → Save → Create & enable rule.
 
-Lúc này vào alert ở mục Security sẽ có: (làm 3 lần mới ra ạ =)))) ở alert thì chọn signal.rule.risk_score.
+Lúc này vào alert ở mục Security sẽ có alert hiện ra.
+
+- Nếu không hiện ra và last response ở tab Rule báo là "failed" thì có 3 trường hợp:
++ Do trước đó chạy ở lab.conf mk đã theo đúng chuẩn (không có filter nên nó tự cho chuẩn)
++ Nhưng khi mk tự thêm filter do chính mk làm (source.ip.source) , nó dẫn đến mapping lỗi
+
+    + Trường nào đó trong signal.threshold_result.* hay signal.* được ghi với một kiểu dữ liệu A (vd: string)
+  
++  sửa rule quá nhiều lần, đổi field / đổi kiểu (vd từ IP sang số, hay đổi field aggregation)
+
+→  Ở đây thì do trường hợp thứ 2, vì vậy ta xoá luôn toàn bộ index signal cũ (cùng mapping cũ, data cũ).
+```bash 
+curl -sS -u elastic:uTSBsSqsQixedrNh8ru2 -X DELETE 'http://127.0.0.1:9200/.siem-signals-*'
+```
+Lần kế tiếp detection engine chạy rule/ Hay load lại tab Rule, nó tự tạo lại .siem-signals-* từ đầu với mapping chuẩn theo phiên bản Kibana hiện tại.
+
+Mọi thứ “sạch sẽ” → không còn conflict → last response nhảy sang succeeded và bạn thấy alert lập tức.
+
 - Sau đó kiểm tra: 
 ```bash 
 curl -sS -u elastic:uTSBsSqsQixedrNh8ru2 \
@@ -710,6 +729,21 @@ curl -sS -H 'Content-Type: application/json' \
     {"range":{"@timestamp":{"gte":"now-5m","lte":"now"}}}
   ]}},
   "aggs":{"by_ip":{"terms":{"field":"source.ip","size":10}}}
+}'
+```
+
+hoặc
+```bash 
+curl -sS -H 'Content-Type: application/json' \
+  -u elastic:uTSBsSqsQixedrNh8ru2 \
+  'http://127.0.0.1:9200/lab-*/_search' -d '{
+  "size":0,
+  "query":{"bool":{"filter":[
+    {"match_phrase":{"host.name":"client"}},
+    {"query_string":{"default_field":"message","query":"sshd AND (Failed OR Invalid OR \"authentication failure\")"}},
+    {"range":{"@timestamp":{"gte":"now-5m","lte":"now"}}}
+  ]}},
+  "aggs":{"by_ip":{"terms":{"field":"source.ip.keyword","size":10}}}
 }'
 ```
 
