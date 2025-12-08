@@ -122,6 +122,13 @@ Copy web vào DocumentRoot
 sudo cp ./src/html/* /var/www/html/
 ```
 
+hoặc nhanh gọn
+```bash
+sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY ''; FLUSH PRIVILEGES;"
+sudo mysql -u root < ./src/users_account.sql
+sudo cp ./src/html/* /var/www/html/
+```
+
 http://IP_CLIENT/ → chạy index.php
 http://IP_CLIENT/login.php → chạy login.php
 → ip client:  176.40.0.7
