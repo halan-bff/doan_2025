@@ -16,7 +16,7 @@ sudo chown -R ubuntu:ubuntu /opt/splunk
 echo "OPTIMISTIC_ABOUT_FILE_LOCKING = 1" | sudo tee -a /opt/splunk/etc/splunk-launch.conf
 ```
 ```bash
-sudo /opt/splunk/bin/splunk start --accept-license  # đặt mật khẩu
+sudo /opt/splunk/bin/splunk start --accept-license 
 ```
 ```bash 
 sudo /opt/splunk/bin/splunk status
@@ -46,7 +46,7 @@ sudo chown -R ubuntu:ubuntu /opt/splunkforwarder
 ```
 Rồi làm tiếp : 
 ```bash
-sudo /opt/splunkforwarder/bin/splunk start --accept-license  # đặt mật khẩu
+sudo /opt/splunkforwarder/bin/splunk start --accept-license  
 ```
 ```bash 
 sudo /opt/splunkforwarder/bin/splunk status
@@ -104,7 +104,6 @@ Kì vọng:
 
 Câu lệnh thử nghiệm (Tùy chọn không dùng):
 ```bash
-sudo hping3 --icmp -c 100 -d 120 176.28.0.7  #ko ra được log
 sudo hping3 --icmp -i u1000 -d 120 176.28.0.7
 ```
 Kiểm tra:
@@ -167,7 +166,10 @@ sudo hping3 --icmp --flood -d 120 176.28.0.7
 Đây mới ICMP flood thật sự
 ```bash
 sudo hping3 --icmp -c 100000 -d 120 176.28.0.7
+```
+```bash 
 sudo hping3 --icmp -i u1000 -d 120 176.28.0.7
+```
 ```
 hoặc
 ```bash
