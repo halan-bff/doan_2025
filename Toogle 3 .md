@@ -7,7 +7,7 @@ attacker:176.40.0.3
 labtainer -r idr_splunk_webscan
 ```
 <details>
-  <summary>Tiêu đề cần thu gọn</summary>
+  <summary> ## Tiêu đề cần thu gọn</summary>
 
 Nội dung bên trong toggle  
 Có thể viết nhiều dòng, code block, hình ảnh, bảng…
