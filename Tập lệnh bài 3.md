@@ -402,14 +402,13 @@ Bấm Save As → Alert…
 
 -  Tab 3 : Trigger Actions → Log Event
 Bấm + Add Actions → Log Event
-
-Điền:
 	+ Event:  WEB_SCAN detected: ip=$result.clientip$ count=$result.err_count$
 	+ Source: giữ nguyên alert:$name$
 	+ Sourcetype: web_scan_alert
 	+ Host: splunk-server
 	+ Index: web_lab
 ➜ Bấm Save.
+
  ```bash 
 WEB_SCAN detected: ip=$result.clientip$ count=$result.err_count$
 ```
