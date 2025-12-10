@@ -404,12 +404,15 @@ Bấm Save As → Alert…
 Bấm + Add Actions → Log Event
 
 Điền:
-+ Event:  WEB_SCAN detected: ip=$result.clientip$ count=$result.err_count$
-+ Source: giữ nguyên alert:$name$
-+ Sourcetype: web_scan_alert
-+ Host: splunk-server (tùy bạn)
-+ Index: web_lab
+	+ Event:  WEB_SCAN detected: ip=$result.clientip$ count=$result.err_count$
+	+ Source: giữ nguyên alert:$name$
+	+ Sourcetype: web_scan_alert
+	+ Host: splunk-server
+	+ Index: web_lab
 ➜ Bấm Save.
+ ```bash 
+WEB_SCAN detected: ip=$result.clientip$ count=$result.err_count$
+```
 
 ## 1.7.3. Bước 3 : Kiểm tra  alert đã có trên server chưa
 Sau khi cho attacker quét lại web, chờ > 5 phút, rồi trên server chạy:
