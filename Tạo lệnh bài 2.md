@@ -8,7 +8,7 @@ labtainer -r idr_splunk_icmpflood
 # (1.1) Ở server: Triển khai cấu hình trên server
 Giải nén và cài đặt: 
 ```bash
-sudo tar -xzf splunk-8.2.6-a6fe1ee8894b-Linux-x86_64.tgz -C /opt  #đợi giải nén 3-4p
+sudo tar -xzf splunk-8.2.6-a6fe1ee8894b-Linux-x86_64.tgz -C /opt 
 ```
 + cấp quyền 
 ```bash 
