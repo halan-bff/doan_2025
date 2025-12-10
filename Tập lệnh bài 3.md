@@ -176,7 +176,9 @@ index=web_lab sourcetype=access_combined status=404 OR status=403
 ```
 
  ➜ Sẽ ra toàn event lỗi 404/403.
-	+ Đếm theo IP:
+ 
++ Đếm theo IP:
+	
 ``` bash
 index=web_lab sourcetype=access_combined
 | stats count by clientip
