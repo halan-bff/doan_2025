@@ -400,9 +400,7 @@ Bấm Save As → Alert…
 	+  Trigger: Once
 	+  Throttle: có thể bỏ trống (hoặc suppress 5 phút nếu sợ spam).
 
--  Tab 3 : Trigger Actions → Log Event
-
---> Bấm + Add Actions → Log Event
+-  Tab 3 : Trigger Actions → Log Event → Bấm + Add Actions → Log Event
 		+ Event:  WEB_SCAN detected: ip=$result.clientip$ count=$result.err_count$
 		+ Source: giữ nguyên alert:$name$
 		+ Sourcetype: web_scan_alert
