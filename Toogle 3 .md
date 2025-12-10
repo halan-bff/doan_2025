@@ -6,6 +6,14 @@ attacker:176.40.0.3
 ```bash 
 labtainer -r idr_splunk_webscan
 ```
+<details>
+  <summary>Tiêu đề cần thu gọn</summary>
+
+Nội dung bên trong toggle  
+Có thể viết nhiều dòng, code block, hình ảnh, bảng…
+
+</details>
+
 # (1.1) Ở server: Triển khai cấu hình trên server
 Giải nén và cài đặt: 
 - đợi giải nén 3-4p
