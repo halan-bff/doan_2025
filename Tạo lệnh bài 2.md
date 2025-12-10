@@ -349,7 +349,7 @@ Vẫn trong cửa sổ “Save As Alert”, kéo xuống phần Trigger Conditio
 Kiểm tra lại 5 ô:
 + Event: ICMP flood detected
 ```bash 
-src_ip=$result.src_ip$, dst_ip=$result.dst_ip$, icmp_count=$result.icmp_count$
+ICMP flood detected: src_ip=$result.src_ip$, dst_ip=$result.dst_ip$, icmp_count=$result.icmp_count$
 ```
 + Source: icmp_flood_alert (hoặc alert:$name$)
 ```bash 
