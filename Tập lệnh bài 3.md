@@ -155,7 +155,7 @@ Cách chạy
 
 
 # (1.3) Ở server: Phát hiện sự cố	
-1.3.1) Cách nhìn bằng giao diện:	
+## 1.3.1) Cách nhìn bằng giao diện:	
 Web: mở http://176.40.0.5:8000  
 
 → đăng nhập admin / Admin@123
@@ -183,7 +183,7 @@ index=web_lab sourcetype=access_combined
 ```
 ➜ Sẽ ra bảng, IP attacker (176.40.0.3) đứng đầu với count rất lớn.
 
-1.3.2) Cách nhìn bằng màn hình lệnh	
+## 1.3.2) Cách nhìn bằng màn hình lệnh	
 ```bash
 sudo /opt/splunk/bin/splunk search index=web_lab sourcetype=access_combined -auth admin:Admin@123 -maxout 20 | tee -a evidence.txt
 ```
