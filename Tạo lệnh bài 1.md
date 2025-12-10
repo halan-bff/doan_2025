@@ -1,8 +1,12 @@
+```bash 
+labtainer - r idr_elk_sshbruteforce
+```
+
+```bash 
 server: 176.34.0.5
-
 client: 176.34.0.7
-
 attacker:176.34.0.3
+```
 
 ```bash 
 Changed password for user kibana_system
@@ -99,7 +103,7 @@ sudo cat /etc/kibana/kibana.yml
 +  QUAN TRỌNG: Kibana PHẢI dùng user kibana_system (không dùng elastic ở đây)
 ``` bash
 elasticsearch.username: "kibana_system"
-elasticsearch.password: ""
+elasticsearch.password: "6nHdjAyw4LBBoFAC78uD"
 xpack.security.enabled: true
 xpack.encryptedSavedObjects.encryptionKey: "12345678901234567890123456789012"
 ```
@@ -129,7 +133,7 @@ PASSWORD elastic = uTSBsSqsQixedrNh8ru2
 - Nhớ đoạn output có :
 ``` bash
     user  => "elastic"
-    password => ""
+    password => "uTSBsSqsQixedrNh8ru2"
 ```
 =======================================================  
 ```bash 
@@ -212,7 +216,11 @@ firefox &
 ``` bash
 http://176.34.0.5:5601
 ```
- hoặc 
+hay
+```bash 
+firefox http://176.34.0.5:5601 &
+```
+hoặc 
 ``` bash
 http://localhost:5601
 ```
@@ -597,10 +605,9 @@ echo "ubuntu:${NEWPASS}" | sudo chpasswd
 # (1.11) Post-Incident Monitoring :Theo dõi hậu sự cố “incident A”
 ## A) Cấu hình lại logstash
 - Sửa /etc/logstash/conf.d/lab.conf để thêm filter (giữ nguyên input/output hiện có):
+
+→  để sau đoạn input {}
 ```bash 
-input {
-  beats { port => 5044 }
-}
 filter {
   if "sshd" in [message] {
     grok {
@@ -616,17 +623,14 @@ filter {
     mutate { add_field => { "event.category" => "authentication" } }
   }
 }
-output {
-  elasticsearch {
-    hosts => ["http://127.0.0.1:9200"]
-    index => "lab-%{+YYYY.MM.dd}"
-  }
-  # stdout { codec => rubydebug }  # tùy bật để debug
-}
 ```
+
 - Rồi sau đó khởi động lại:
 ```bash
 sudo systemctl restart logstash
+```
+→  rồi kiểm tra
+```bash
 sudo systemctl status logstash --no-pager
 sudo ss -lnt 'sport = :9200 or sport = :5601 or sport = :5044'  
 ```
@@ -636,7 +640,7 @@ http://176.34.0.5:5601
 
 ## B) Trong giao diện UI, tạo alert
 Vào tab Security → Rules → Create new rule → chọn Threshold (đừng chọn Query).##
-### mục Defination :
+### MỤC Defination :
   + Index patterns: lab-*   (đã có trước đó và bắt dùng)
   + Custom query:
 KQL:
@@ -649,15 +653,19 @@ source.ip.keyword
 ```
 Threshold: is ≥ 1 within 1 minute (tùy đổi ngưỡng).
 
-### About: 
+### MỤC About: 
   + Name:
 ```bash 
 SSH brute-force failed (by IP)
 ```
-### Schedule: 
+### MỤC Schedule: 
   + Schedule: Run every 2 minute, Look back 1 minutes.
 
-### Actions: trong môi trường của bạn chỉ có “Index” → dùng luôn: Log
+### MỤC Actions: 
+
+Trong môi trường của bạn chỉ có “Index” → dùng luôn: Log
+
+
   + Action Frequency: On each rule execution
 
 Chọn Index → tạo connector mới:
@@ -677,6 +685,7 @@ ir_ssh_alerts
 → Save → Create & enable rule.
 
 Lúc này vào alert ở mục Security sẽ có alert hiện ra.
+
 
 - Nếu không hiện ra và last response ở tab Rule báo là "failed" thì có 3 trường hợp:
   
@@ -714,7 +723,8 @@ curl -sS -u elastic:uTSBsSqsQixedrNh8ru2 \
     time:$time }' | tee -a /home/ubuntu/evidence.json
 ```
 
-### Nếu lỗi:===================================================
+### NẾU BỊ LỖI  : ==================================
+XÓA CÁI NÀY ĐI THÌ HẾT LỖI
 ```bash 
 curl -sS -u elastic:uTSBsSqsQixedrNh8ru2 -X DELETE 'http://127.0.0.1:9200/.siem-signals-*'
 ```
@@ -747,6 +757,7 @@ curl -sS -H 'Content-Type: application/json' \
   "aggs":{"by_ip":{"terms":{"field":"source.ip.keyword","size":10}}}
 }'
 ```
+
 
 
 
