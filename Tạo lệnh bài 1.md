@@ -248,13 +248,15 @@ Còn trong tab Security --> gồm có Alert và Rule như cột bên trái
 Dùng hydra với wordlist 5 từ của bạn. → Sinh nhiều lần sai → log Failed password → fail2ban ban. [attacker] brute-force
 
 ``` bash
-hydra -l ubuntu -P /opt/wordlist.txt -I -t 4 -f ssh://176.34.0.7
+hydra -l ubuntu -P /opt/wordlist1.txt -I -t 4 -f ssh://176.34.0.7
 ```
 hoặc :
 ``` bash
-hydra -l ubuntu -P /opt/wordlist.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7
+hydra -l ubuntu -P /opt/wordlist1.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7
 ```
-
+```bash 
+hydra -l ubuntu -P /opt/wordlist2.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7 
+```
 để chạy
 
 (1.3) Trên server, phát hiện incident A ở công cụ elk và terminal server 
@@ -319,7 +321,10 @@ sudo nano /etc/fail2ban/jail.local
 
 * Attacker thử lại tấn công
 ``` bash
-hydra -l ubuntu -P /opt/wordlist.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7 
+hydra -l ubuntu -P /opt/wordlist1.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7 
+```
+```bash 
+hydra -l ubuntu -P /opt/wordlist2.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7 
 ```
 → Được vài giây sau, client đã chặn thành công khi banned Ip đã có ip của attacker 176.34.0.3 khi kiểm tra bằng câu lệnh: 
 ```bash
@@ -331,7 +336,9 @@ sudo fail2ban-client set sshd unbanip 176.34.0.3
 sudo fail2ban-client set sshd addignoreip 176.34.0.3
 ```
 Lí do: nếu trong thực tế , attacker không chỉ 1 địa chỉ ip được ;v. Chỉ là trong lab đang làm tối giản á nên dùng 1 cái cho tiện
-
+```bash 
+hydra -l ubuntu -P /opt/wordlist.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7 
+```
 # (0.4) Incident B: attacker ssh brute success, tạo persistence (nhẹ) trong phiên SSH và Cài cron
 ##  a) Terminal attacker (đang ở máy 176.34.0.3), trước khi bạn đăng nhập ssh vào client.
 Lệnh chạy:
@@ -757,6 +764,7 @@ curl -sS -H 'Content-Type: application/json' \
   "aggs":{"by_ip":{"terms":{"field":"source.ip.keyword","size":10}}}
 }'
 ```
+
 
 
 
