@@ -6,7 +6,8 @@ attacker:176.40.0.3
 ```bash 
 labtainer -r idr_splunk_webscan
 ```
-<h1 style="color:red;">(1.1) Ở server: Triển khai cấu hình trên server</h1>
+# <span style="color:#d9534f;">(1.1)</span> Ở server: Triển khai cấu hình trên server
+
 
 Giải nén và cài đặt: 
 - đợi giải nén 3-4p
