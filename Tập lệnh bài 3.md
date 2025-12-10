@@ -3,7 +3,9 @@ server: 176.40.0.5
 client: 176.40.0.7
 attacker:176.40.0.3
 =======================================================  
-
+```bash 
+labtainer -r idr_splunk_webscan
+```
 # (1.1) Ở server: Triển khai cấu hình trên server
 Giải nén và cài đặt: 
 - đợi giải nén 3-4p
@@ -384,13 +386,10 @@ Bấm Save As → Alert…
 ## 1.7.2. Bước 2: Lưu search này thành Alert	
 -  Tab 1: alert
 
-	+ Title:
-```bash 
- + WEB_SCAN_404_403_Alert
-```
-	+ Description: Cảnh báo khi 1 IP có >=200 HTTP 404/403 trong 5 phút (nghi vấn web directory brute-force).
+	+ Title:  WEB_SCAN_404_403_Alert
+	+ Description:  Cảnh báo khi 1 IP có >=200 HTTP 404/403 trong 5 phút (nghi vấn web directory brute-force).
 	+ Alert type: Scheduled
-	+ Run every: 5 minutes
+	+ Run every: Cron job
 	+ Nếu không có lựa chọn sẵn thì chọn Cron schedule và gõ: */5 * * * *  hoặc * * * * *
 	+ Permissions: để Private.
 
@@ -417,6 +416,7 @@ Sau khi cho attacker quét lại web, chờ > 5 phút, rồi trên server chạy
 sudo /opt/splunk/bin/splunk search 'index=web_lab sourcetype=web_scan_alert' -auth admin:Admin@123  | tee -a evidence.txt
 ```
 Bạn sẽ thấy dòng kiểu:
+
 WEB_SCAN detected: ip=176.40.0.3 err_count=395
 
 → Lúc đó có thể dùng chuỗi WEB_SCAN detected hoặc sourcetype=web_scan_alert cho checkwork.
