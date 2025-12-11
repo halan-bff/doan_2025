@@ -72,6 +72,8 @@ xpack.security.enabled: true
 +  Khởi động lại:
 ```bash
 sudo systemctl restart elasticsearch
+```
+```bash
 sudo systemctl status elasticsearch --no-pager
 ```
 - Trên server, ta sinh mật khẩu ngẫu nhiên
@@ -109,6 +111,8 @@ xpack.encryptedSavedObjects.encryptionKey: "12345678901234567890123456789012"
 - Rồi restart lại kibana:
 ```bash
 sudo systemctl restart kibana
+```
+```bash
 sudo systemctl status kibana
 ```
 - Đối với logstash: 
@@ -150,6 +154,8 @@ output {
 - Rồi khởi động :
 ```bash
 sudo systemctl restart logstash
+```
+```bash
 sudo systemctl status logstash --no-pager  
 sudo cat /etc/logstash/conf.d/lab.conf
 ```
@@ -762,6 +768,7 @@ curl -sS -H 'Content-Type: application/json' \
   "aggs":{"by_ip":{"terms":{"field":"source.ip.keyword","size":10}}}
 }'
 ```
+
 
 
 
