@@ -263,10 +263,16 @@ hydra -l ubuntu -P /opt/wordlist2.txt -V -t 8 -f -o hydra.out ssh://176.34.0.7
 ```
 để chạy
 
-(1.3) Trên server, phát hiện incident A ở công cụ elk và terminal server 
+# (1.3) Trên server, phát hiện incident A ở công cụ elk và terminal server 
 (pass)
-Changed password for user elastic
 
+## Trên giao diện ELK
+Tại Kibana chọn Discover →  tại ô KQL query dán:
+``` bash
+host.name:"client" AND message:*sshd* AND (message:*fail* OR message:*invalid* OR message:*refus* OR message:*denied*)
+```
+## Trên terminal
+Changed password for user elastic
 PASSWORD elastic = z2Ci4oO1ElY3YdydvaJP
 
 Đếm số lần ssh brute force fail: 
@@ -297,6 +303,9 @@ Mục tiêu: ngăn sự cố lan rộng, giảm thiệt hại tức thời, chư
 - Cài fail2log và nftables: 
 ```bash
 sudo apt-get update && sudo apt-get install -y fail2ban nftables
+```
+```bash
+sudo apt-get update && sudo apt-get install -y fail2ban
 ```
 - Rồi đặt lệnh: (2)
 ```bash
@@ -332,6 +341,10 @@ CONF
 ``` bash
 sudo systemctl restart fail2ban nftables
 sudo systemctl status fail2ban nftables 
+```
+``` bash
+sudo systemctl restart fail2ban 
+sudo systemctl status fail2ban
 ```
 và
 ``` bash
@@ -783,6 +796,7 @@ curl -sS -H 'Content-Type: application/json' \
   "aggs":{"by_ip":{"terms":{"field":"source.ip.keyword","size":10}}}
 }'
 ```
+
 
 
 
