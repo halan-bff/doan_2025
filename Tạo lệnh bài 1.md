@@ -313,6 +313,21 @@ bantime   = 600
 banaction = nftables-multiport
 CONF
 ```
+hoặc
+```bash
+sudo tee /etc/fail2ban/jail.local >/dev/null <<'CONF'
+[sshd]
+enabled   = true
+port      = 22
+filter    = sshd
+logpath   = /var/log/auth.log
+backend   = auto
+maxretry  = 5
+findtime  = 60
+bantime   = 600
+banaction = iptables-multiport
+CONF
+```
 → jail.local của bạn đang để banaction = dummy → không chặn gì cả (chỉ phát hiện/ghi log). NÊn để phải là nftables-multiport
 ``` bash
 sudo systemctl restart fail2ban nftables
@@ -768,6 +783,7 @@ curl -sS -H 'Content-Type: application/json' \
   "aggs":{"by_ip":{"terms":{"field":"source.ip.keyword","size":10}}}
 }'
 ```
+
 
 
 
