@@ -8,9 +8,9 @@ server: 176.34.0.5   || client: 176.34.0.7  || attacker:176.34.0.3
 
 ```bash 
 Changed password for user kibana_system
-PASSWORD kibana_system = 809fPpSdOX5UQEHC7TCX
+PASSWORD kibana_system = hTMFd3DuHsnB95ZExUwP
 Changed password for user elastic
-PASSWORD elastic = z2Ci4oO1ElY3YdydvaJP
+PASSWORD elastic = NervUoDVWlxIlrk2XYS7
 ```
 
   
@@ -85,11 +85,11 @@ sudo /usr/share/elasticsearch/bin/elasticsearch-setup-passwords auto
 
 Changed password for user kibana_system
 
-PASSWORD kibana_system = 809fPpSdOX5UQEHC7TCX
+PASSWORD kibana_system = hTMFd3DuHsnB95ZExUwP
 
 Changed password for user elastic
 
-PASSWORD elastic = z2Ci4oO1ElY3YdydvaJP
+PASSWORD elastic = NervUoDVWlxIlrk2XYS7
 
 - Đôi với kibana: 
 ```bash
@@ -103,7 +103,7 @@ sudo cat /etc/kibana/kibana.yml
 +  QUAN TRỌNG: Kibana PHẢI dùng user kibana_system (không dùng elastic ở đây)
 ``` bash
 elasticsearch.username: "kibana_system"
-elasticsearch.password: "809fPpSdOX5UQEHC7TCX"
+elasticsearch.password: "hTMFd3DuHsnB95ZExUwP"
 xpack.security.enabled: true
 xpack.encryptedSavedObjects.encryptionKey: "12345678901234567890123456789012"
 ```
@@ -130,12 +130,12 @@ sudo nano /etc/logstash/conf.d/lab.conf
 ```
  (pass)  Changed password for user elastic
  
-PASSWORD elastic = z2Ci4oO1ElY3YdydvaJP
+PASSWORD elastic = NervUoDVWlxIlrk2XYS7
 
 - Nhớ đoạn output có :
 ``` bash
     user  => "elastic"
-    password => "z2Ci4oO1ElY3YdydvaJP"
+    password => "NervUoDVWlxIlrk2XYS7"
 ```
 =======================================================  
 ```bash 
@@ -196,10 +196,10 @@ curl -u elastic:yourpassword -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v'
 (pass)
 Changed password for user elastic
 
-PASSWORD elastic = z2Ci4oO1ElY3YdydvaJP
+PASSWORD elastic = NervUoDVWlxIlrk2XYS7
 
 ``` bash
-curl -u elastic:z2Ci4oO1ElY3YdydvaJP -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v' 
+curl -u elastic:NervUoDVWlxIlrk2XYS7 -sS 'http://127.0.0.1:9200/_cat/indices/lab-*?v' 
 ```
 
 
@@ -273,11 +273,11 @@ host.name:"client" AND message:*sshd* AND (message:*fail* OR message:*invalid* O
 ```
 ## Trên terminal
 Changed password for user elastic
-PASSWORD elastic = z2Ci4oO1ElY3YdydvaJP
+PASSWORD elastic = NervUoDVWlxIlrk2XYS7
 
 Đếm số lần ssh brute force fail: 
 ``` bash
-curl -sS -u elastic:z2Ci4oO1ElY3YdydvaJP \
+curl -sS -u elastic:NervUoDVWlxIlrk2XYS7 \
   'http://127.0.0.1:9200/lab-*/_count?filter_path=count' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -489,7 +489,7 @@ sudo tail -n 80 /var/log/syslog | egrep -i 'persistence-once|CRON|persistence'
 (pass)
 Changed password for user elastic
 
-PASSWORD elastic = z2Ci4oO1ElY3YdydvaJP
+PASSWORD elastic = NervUoDVWlxIlrk2XYS7
 
 ví dụ :  curl -sS -u elastic:<password_elastic>  
 
@@ -516,7 +516,7 @@ CÓ: xuất hiện dòng kiểu Accepted publickey for ubuntu from <IP> …
 KO: Count = 0
 → curl (đếm chính xác):
 ```bash 
-curl -sS -u elastic:z2Ci4oO1ElY3YdydvaJP -H 'Content-Type: application/json' \
+curl -sS -u elastic:NervUoDVWlxIlrk2XYS7 -H 'Content-Type: application/json' \
  'http://127.0.0.1:9200/lab-*/_count' -d '{
   "query": {"bool":{"must":[
     {"match_phrase":{"host.name":"client"}},
@@ -554,7 +554,7 @@ CÓ: Dòng CRON (hoặc log khác) chứa “persistence-once”.
 KO: Count = 0
 curl (tìm đúng chuỗi)
 ```bash 
-curl -sS -u elastic:z2Ci4oO1ElY3YdydvaJP -H 'Content-Type: application/json' \
+curl -sS -u elastic:NervUoDVWlxIlrk2XYS7 -H 'Content-Type: application/json' \
  'http://127.0.0.1:9200/lab-*/_count' -d '{
   "query": {"bool":{"must":[
     {"match_phrase":{"host.name":"client"}},
@@ -583,7 +583,7 @@ cp -a ~/.ssh/authorized_keys ~/ir-backup/authorized_keys.bak.$(date +%s)   \
 - Nếu muốn xóa đi làm lại:    rm -rf ir-backup/* 
 - Trên server : Thu thập log
 ```bash 
-curl -sS -u elastic:z2Ci4oO1ElY3YdydvaJP \
+curl -sS -u elastic:NervUoDVWlxIlrk2XYS7 \
   "http://127.0.0.1:9200/lab-*/_search?size=10000&pretty" \
   -H "Content-Type: application/json" \
   -d '{
@@ -737,7 +737,7 @@ Lúc này vào alert ở mục Security sẽ có alert hiện ra.
 
 →  Ở đây thì do trường hợp thứ 2, vì vậy ta xoá luôn toàn bộ index signal cũ (cùng mapping cũ, data cũ).
 ```bash 
-curl -sS -u elastic:z2Ci4oO1ElY3YdydvaJP -X DELETE 'http://127.0.0.1:9200/.siem-signals-*'
+curl -sS -u elastic:NervUoDVWlxIlrk2XYS7 -X DELETE 'http://127.0.0.1:9200/.siem-signals-*'
 ```
 Lần kế tiếp detection engine chạy rule/ Hay load lại tab Rule, nó tự tạo lại .siem-signals-* từ đầu với mapping chuẩn theo phiên bản Kibana hiện tại.
 
@@ -745,7 +745,7 @@ Mọi thứ “sạch sẽ” → không còn conflict → last response nhảy 
 
 - Sau đó kiểm tra: 
 ```bash 
-curl -sS -u elastic:z2Ci4oO1ElY3YdydvaJP \
+curl -sS -u elastic:NervUoDVWlxIlrk2XYS7 \
 'http://127.0.0.1:9200/.siem-signals-*/_search' \
 -H 'Content-Type: application/json' -d '{
   "size": 0,
@@ -765,12 +765,12 @@ curl -sS -u elastic:z2Ci4oO1ElY3YdydvaJP \
 ### NẾU BỊ LỖI  : ==================================
 XÓA CÁI NÀY ĐI THÌ HẾT LỖI
 ```bash 
-curl -sS -u elastic:z2Ci4oO1ElY3YdydvaJP -X DELETE 'http://127.0.0.1:9200/.siem-signals-*'
+curl -sS -u elastic:NervUoDVWlxIlrk2XYS7 -X DELETE 'http://127.0.0.1:9200/.siem-signals-*'
 ```
 Cái này dùng kiểm tra:
 ```bash 
 curl -sS -H 'Content-Type: application/json' \
-     -u elastic:z2Ci4oO1ElY3YdydvaJP\
+     -u elastic:NervUoDVWlxIlrk2XYS7\
 'http://127.0.0.1:9200/lab-*/_search' -d '{
   "size":0,
   "query":{"bool":{"filter":[
@@ -785,7 +785,7 @@ curl -sS -H 'Content-Type: application/json' \
 hoặc
 ```bash 
 curl -sS -H 'Content-Type: application/json' \
-  -u elastic:z2Ci4oO1ElY3YdydvaJP \
+  -u elastic:NervUoDVWlxIlrk2XYS7 \
   'http://127.0.0.1:9200/lab-*/_search' -d '{
   "size":0,
   "query":{"bool":{"filter":[
@@ -796,6 +796,7 @@ curl -sS -H 'Content-Type: application/json' \
   "aggs":{"by_ip":{"terms":{"field":"source.ip.keyword","size":10}}}
 }'
 ```
+
 
 
 
