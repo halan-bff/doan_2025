@@ -70,9 +70,31 @@ sudo /opt/splunkforwarder/bin/splunk list forward-server
 ```
 → đợi 1-2 phút để nó ra như hình. Phải đúng như kì vọng dưới: 
 
+# (0.1) Trên server: Tạo index riêng cho lab ICMP
+Nếu muốn dùng index = icmp_lab như ở trên, trên server:
+```bash
+sudo /opt/splunk/bin/splunk add index icmp_lab -auth admin:Admin@123
+```
+(Làm một lần là đủ.)
+Mở :
+```bash 
+firefox http://127.0.0.1:8000  &
+```
+- Rồi login: admin và mật khẩu là  Admin@123
+Trong giao diện Search & Reporting:
+Nếu dùng index riêng:
+```bash 
+index=icmp_lab sourcetype=tcpdump_icmp
+```
+→ Khi attacker flood ICMP, bạn sẽ mới thấy các event giống hệt nội dung tcpdump, mỗi dòng là một event. 
 
-# (0.1) Trên client: tạo log ICMP bằng tcpdump và cấu hình Splunk Forwarder đọc log
-## 0.1.1) Tạo log ICMP bằng tcpdump
+Từ đây bạn có thể tự viết thêm search / alert để phát hiện ICMP flood (đếm pps theo src IP, v.v.).
+```bash
+sudo hping3 --icmp --flood -d 120 176.28.0.7
+```
+
+# (0.2) Trên client: tạo log ICMP bằng tcpdump và cấu hình Splunk Forwarder đọc log
+## 0.2.1) Tạo log ICMP bằng tcpdump
 ### bước 1: Tạo script ghi ICMP vào /var/log/tcpdump_icmp.log
 ```bash
 sudo nano /usr/local/bin/tcpdump_icmp.sh
@@ -111,7 +133,7 @@ Kiểm tra:
 tail -n 5 /var/log/tcpdump_icmp.log
 ```
 
-## 0.1.2) Cấu hình Splunk Forwarder đọc /var/log/tcpdump_icmp.log
+## 0.2.2) Cấu hình Splunk Forwarder đọc /var/log/tcpdump_icmp.log
 ###  bước 1 : Tạo inputs.conf để monitor file ICMP
 ```bash
 sudo nano /opt/splunkforwarder/etc/system/local/inputs.conf
@@ -139,28 +161,6 @@ sudo /opt/splunkforwarder/bin/splunk list monitor -auth client:Admin@123
 ```
 Kì vọng: Kết quả lệnh ra là cuối dòng có dòng: /var/log/tcpdump_icmp.log
 
-# (0.2) Trên server: Tạo index riêng cho lab ICMP
-Nếu muốn dùng index = icmp_lab như ở trên, trên server:
-```bash
-sudo /opt/splunk/bin/splunk add index icmp_lab -auth admin:Admin@123
-```
-(Làm một lần là đủ.)
-Mở :
-```bash 
-firefox http://127.0.0.1:8000  &
-```
-- Rồi login: admin và mật khẩu là  Admin@123
-Trong giao diện Search & Reporting:
-Nếu dùng index riêng:
-```bash 
-index=icmp_lab sourcetype=tcpdump_icmp
-```
-→ Khi attacker flood ICMP, bạn sẽ mới thấy các event giống hệt nội dung tcpdump, mỗi dòng là một event. 
-
-Từ đây bạn có thể tự viết thêm search / alert để phát hiện ICMP flood (đếm pps theo src IP, v.v.).
-```bash
-sudo hping3 --icmp --flood -d 120 176.28.0.7
-```
 
 # (0.3) Ở attacker: Tạo ICMP Flood ở attacker
 Đây mới ICMP flood thật sự
