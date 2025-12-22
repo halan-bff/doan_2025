@@ -102,24 +102,6 @@ sudo /usr/local/bin/tcpdump_icmp.sh &
 ```
 sang terminal khác làm tiếp.
 
-### Lưu ý:
-Nếu attacker bắn ICMP thì bạn xem nhanh log sẽ thấy các dòng kiểu:
-```bash
-sudo tail -f /var/log/tcpdump_icmp.log
-```
-Kì vọng: 
-
-2025-11-20 14:01:23.123456 IP 176.28.0.3 > 176.28.0.7: ICMP echo request, id 1234, seq 1, length 64
-
-Câu lệnh thử nghiệm (Tùy chọn không dùng):
-```bash
-sudo hping3 --icmp -i u1000 -d 120 176.28.0.7
-```
-Kiểm tra:
-```bash 
-tail -n 5 /var/log/tcpdump_icmp.log
-```
-
 ## 0.2.2) Cấu hình Splunk Forwarder đọc /var/log/tcpdump_icmp.log
 ###  bước 1 : Tạo inputs.conf để monitor file ICMP
 ```bash
@@ -164,7 +146,10 @@ sudo hping3 --icmp --flood -d 120 176.28.0.7
 
 # (1.3) Ở server: Phát hiện sự cố
 ## 1.3.1) Cách nhìn bằng giao diện: 
-Mở firefox http://127.0.0.1:8000  
+Mở firefox http://127.0.0.1:8000
+```bash 
+firefox http://127.0.0.1:8000 &
+```
 Login: admin / Admin@123.
 
 --> nhớ phóng to màn hình
@@ -377,5 +362,6 @@ sudo /opt/splunk/bin/splunk search \
 'index=icmp_lab sourcetype=icmp_flood_alert "ICMP flood detected"' \
 -auth admin:Admin@123 -maxout 50 | tee -a evidence.txt
 ```
+
 
 
