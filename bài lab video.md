@@ -157,7 +157,6 @@ sudo hping3 --icmp -c 100000 -d 120 176.28.0.7
 ```bash 
 sudo hping3 --icmp -i u1000 -d 120 176.28.0.7
 ```
-```
 hoặc
 ```bash
 sudo hping3 --icmp --flood -d 120 176.28.0.7
@@ -378,4 +377,5 @@ sudo /opt/splunk/bin/splunk search \
 'index=icmp_lab sourcetype=icmp_flood_alert "ICMP flood detected"' \
 -auth admin:Admin@123 -maxout 50 | tee -a evidence.txt
 ```
+
 
