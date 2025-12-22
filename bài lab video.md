@@ -66,7 +66,17 @@ Nếu muốn dùng index = icmp_lab , trên server:
 ```bash
 sudo /opt/splunk/bin/splunk add index icmp_lab -auth admin:Admin@123
 ```
-
+Câu lệnh kiểm tra:
+```bash
+sudo /opt/splunk/bin/splunk list index -auth admin:Admin@123
+```
+Kết quả ra được: 
+```bash
+icmp_lab
+	/opt/splunk/var/lib/splunk/icmp_lab/db
+	/opt/splunk/var/lib/splunk/icmp_lab/colddb
+	/opt/splunk/var/lib/splunk/icmp_lab/thaweddb
+```
 # (0.2) Trên client: tạo log ICMP bằng tcpdump và cấu hình Splunk Forwarder đọc log
 ## 0.2.1) Tạo log ICMP bằng tcpdump
 ### bước 1: Tạo script ghi ICMP vào /var/log/tcpdump_icmp.log
@@ -368,3 +378,4 @@ sudo /opt/splunk/bin/splunk search \
 'index=icmp_lab sourcetype=icmp_flood_alert "ICMP flood detected"' \
 -auth admin:Admin@123 -maxout 50 | tee -a evidence.txt
 ```
+
